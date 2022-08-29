@@ -16,12 +16,12 @@ from openpyxl import Workbook
 K.clear_session() #limpia el backend de keras para que no haya informacion basura 
 
 # Se definen las rutas de los conjuntos de entrenamiento y el de validacion
-train_path = 'C:/Users/saulu/Documents/Proyecto_Tesis/Thesis/DATASET/TRAINING_SET'
-test_path = 'C:/Users/saulu/Documents/Proyecto_Tesis/Thesis/DATASET/TEST_SET'
+train_path = 'C:/Users/saulu/Documents/SistemaTesis/Thesis/DATASET/TRAINING_SET'
+test_path = 'C:/Users/saulu/Documents/SistemaTesis/Thesis/DATASET/TEST_SET'
 
 
 #Leyendo imagenes para comprobar que si se puede acceder a la carpeta de entrenamiento
-'''enf_path = 'C:/Users/saulu/Documents/Proyecto_Tesis/Thesis/DATASET/TRAINING_SET/ENFERMOS/'
+'''enf_path = 'C:/Users/saulu/Documents/SistemaTesis/Thesis/DATASET/TRAINING_SET/ENFERMOS/'
 enf_training = []
 cont = 0
 
