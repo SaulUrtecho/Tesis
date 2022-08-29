@@ -1,0 +1,290 @@
+# ********* PARTE 3: Interfaz grafica UI para validar el modelo *********
+# se utiliza la libreria tkinter
+
+from tkinter import *
+from PIL import Image, ImageTk
+from tkinter import filedialog as fd  # Esta libreria sirve para abrir una ventana de dialogo
+import cv2
+from keras_preprocessing import image
+import numpy as np
+import tensorflow as tf
+from keras.preprocessing.image import load_img, img_to_array
+from keras.models import load_model
+from keras.initializers import glorot_uniform
+from tkinter import Tk, Label, Button, Entry, ttk
+import tkinter
+import re
+
+# Configuramos el alto y ancho que tendran las imagenes a utilizar en la interfaz
+longitud, altura = 200, 200
+# Definimos las rutas de los archivos necesarios para que funcione el programa
+ruta_logo_itm = 'C:/Users/saulu/Documents/Proyecto_Tesis/Thesis/logo.jpg'
+ruta_modelo_default = 'C:/Users/saulu/Documents/Proyecto_Tesis/Thesis/DATOS_RED/Modelo.h5'
+ruta_pesos_default = 'C:/Users/saulu/Documents/Proyecto_Tesis/Thesis/DATOS_RED/Pesos.h5'
+
+# Esta es la clase que crea la interfaz grafica se utiliza POO
+class Principal():
+    # Metodo constructor el cual recibe un objeto Tk()
+    # este metodo inicializa toda la interfaz
+    def __init__(self, master):
+        self.master = master
+        self.master.title("(TESIS) Predicción de Salud en Corales del Caribe Mexicano")
+        self.master.geometry("500x400+450+100")
+        self.etiqueta_modelo = Label(self.master, text="Seleccione el modelo: ")
+        self.etiqueta_modelo.pack()
+        self.boton_cargar_modelo = Button(self.master, text="Cargar Modelo", command=self.cargar_modelo) # boton para cargar el modelo obtenido de la red
+        self.boton_cargar_modelo.pack()
+        self.etiqueta_pesos = Label(self.master, text="Seleccione los pesos: ")
+        self.etiqueta_pesos.pack()
+        self.boton_cargar_pesos = Button(self.master, text="Cargar Pesos", command=self.cargar_pesos) # boton para cargar los pesos obtenidos de la red
+        self.boton_cargar_pesos.pack()
+        self.etiqueta_imagen = Label(self.master, text="Seleccione Imagen a Evaluar: ")
+        self.etiqueta_imagen.pack()
+        self.boton_cargar_imagen = Button(self.master, text="Cargar Imagen", command=self.seleccionar_imagen) # Cargar la imagen
+        self.boton_cargar_imagen.pack()
+        logo = cv2.imread(ruta_logo_itm) # Leemos el logo del ITM
+        logo = cv2.cvtColor(logo, cv2.COLOR_BGR2RGB) # Se convierte a RGB
+        logo = Image.fromarray(logo) # se convierte de matriz a imagen
+        logo = ImageTk.PhotoImage(logo) # se convierte a una PhotoImage para colocar en una etiqueta
+        self.panelLogo = Label(self.master, image=logo) # El logo se coloca en una etiqueta_imagen
+        self.panelLogo.pack(side="bottom")
+        self.master.mainloop()  # Este mainloop es el que mantiene la VENTANA PRINCIPAL FUNCIONANDO
+
+
+    def cargar_modelo(self): # en esta funcion obtenemos la ruta del modelo
+        self.ruta_modelo_user = fd.askopenfilename()  # abre cuadro de dialogo para pedir la ruta del modelo al usuario
+        if len(self.ruta_modelo_user) > 0:  # si el tamaño de la cadena es mayor a 0, es que existe la ruta
+            # si la ruta del usuario es diferente a la ruta por defecto se lanza una ventana de error
+            if self.ruta_modelo_user != ruta_modelo_default: 
+                self.ventana_alerta = Toplevel()
+                self.ventana_alerta.geometry("300x100+500+250") # Se establece el tamaño de la ventana secundaria
+                self.ventana_alerta.wm_title("WARNING!!!") # Se le asigna el titulo
+                self.ventana_alerta.focus_set() # Este metodo enfoca la ventana secundaria 
+                self.ventana_alerta.grab_set() # desactivamos la ventana principal 
+                self.aviso = Label(self.ventana_alerta, text="No ha seleccionado el modelo\nIntente Nuevamente!!") # asignamos la etiqueta_imagen para mencionar que es un coral enfermo
+                self.aviso.pack()
+                self.aviso.config(fg="black")
+                self.botonCerrar = Button(self.ventana_alerta, text='Aceptar', command=self.cerrar_ventana_warning) # solo los botones pueden usar command, las etiquetas no
+                self.botonCerrar.pack()
+            else:
+                self.etiqueta_modelo.pack_forget()  # al cargar el modelo correctamente se eliminan la etiqueta y el boton
+                self.boton_cargar_modelo.pack_forget()
+        return self.ruta_modelo_user  # devolvemos la ruta dada por el usuario
+    
+    def cargar_pesos(self): # en esta funcion obtenemos la ruta de los pesos
+        self.ruta_pesos_user=fd.askopenfilename()
+        if len(self.ruta_pesos_user)>0: # si la ruta del usuario existe
+            if self.ruta_pesos_user != ruta_pesos_default:
+                self.ventana_alerta = Toplevel()
+                self.ventana_alerta.geometry("300x100+500+250") # Se establece el tamaño de la ventana secundaria
+                self.ventana_alerta.wm_title("WARNING!!!") # Se le asigna el titulo
+                self.ventana_alerta.focus_set() # Este metodo enfoca la ventana secundaria 
+                self.ventana_alerta.grab_set() # desactivamos la ventana principal 
+                self.aviso = Label(self.ventana_alerta, text="No ha seleccionado los pesos\nIntente Nuevamente!!") # asignamos la etiqueta_imagen para mencionar que es un coral enfermo
+                self.aviso.pack()
+                self.aviso.config(fg="black")
+                self.botonCerrar = Button(self.ventana_alerta, text='Aceptar', command=self.cerrar_ventana_warning)
+                self.botonCerrar.pack()
+            else:
+                self.etiqueta_pesos.pack_forget() # Si los pesos son elegidos correctamente se borran los botones
+                self.boton_cargar_pesos.pack_forget()
+        return self.ruta_pesos_user
+    
+    # metodo para destruir la pequeña ventana emergente
+    def cerrar_ventana_warning(self): 
+        self.ventana_alerta.destroy()
+        
+    def seleccionar_imagen(self):
+        panel_img_principal = None # esta variable contendra la imagen que se muestra al momento de seleccionar la imagen
+        self.ruta_imagen_user = fd.askopenfilename() # Abre una ventana de dialogo para seleccionar una imagen, y devuelve la ruta de la imagen seleccionada
+        if len(self.ruta_imagen_user) > 0:
+            if re.search("\.(jpg|jpeg|JPG|png|bmp|tiff)$", self.ruta_imagen_user): # Validamos que el usuario haya seleccionado una imagen
+                self.etiqueta_imagen.pack_forget() # al momento de seleccionar la imagen se elimina la etiqueta_imagen que pide seleccionar imagen
+                self.boton_cargar_imagen.pack_forget() # el boton cargar se elimina al seleccionar la imagen
+                self.panelLogo.pack_forget()  # el panel del logo ITM se elimina
+                image = cv2.imread(self.ruta_imagen_user) # la imagen es leida
+                image = cv2.resize(image, (longitud, altura)) # Se cambia el tamaño a 300x300
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # Se convierte a RGB
+                image = Image.fromarray(image) # se convierte de matriz a imagen
+                image = ImageTk.PhotoImage(image) # La funcion PhotoImage() crea una instancia de imagen para colocar en una label
+                self.imagen_copia = image # se crea una copia de la imagen para colocarla en la ventana secundaria al momento de predecir
+                self.botonPredict = Button(text="Detectar Estado de Salud", command=self.prediccion) # se crea el boton que hace la prediccion
+                self.botonPredict.pack() # el boton es colocado en la interfaz
+                self.boton_selec_otra_img = Button(text="Seleccionar otra imagen", command=self.seleccionar_imagen_2) # se crea un boton debajo por si quiere seleccionar otra imagen
+                self.boton_selec_otra_img.pack()
+
+                if panel_img_principal is None: # Si la variable panel_img_principal esta inicializada en nula
+                    self.panel_img_principal = Label(self.master, image=image)  # se carga la imagen en la label
+                    self.panel_img_principal.pack(side="bottom")
+                else:
+                    self.panel_img_principal.configure(self.master, image=image)  # si ya hay una imagen se configura con una nueva
+                    self.panel_img_principal.pack(side="bottom")
+            else:
+                self.ventana_alerta = Toplevel()
+                self.ventana_alerta.geometry("300x100+500+250") # Se establece el tamaño de la ventana secundaria
+                self.ventana_alerta.wm_title("WARNING!!!") # Se le asigna el titulo
+                self.ventana_alerta.focus_set() # Este metodo enfoca la ventana secundaria 
+                self.ventana_alerta.grab_set() # desactivamos la ventana principal 
+                self.aviso = Label(self.ventana_alerta, text="No ha seleccionado una imagen\nIntente Nuevamente!!") # asignamos la etiqueta_imagen para mencionar que es un coral enfermo
+                self.aviso.pack()
+                self.aviso.config(fg="black")
+                self.botonCerrar = Button(self.ventana_alerta, text='Aceptar', command=self.cerrar_ventana_warning)
+                self.botonCerrar.pack()
+            self.master.mainloop() # Este mainloop se coloca aqui para mantener la VENTANA PRINCIPAL FUNCIONANDO despues de cerrar la ventana secundaria del resultado de la prediccion
+
+    def seleccionar_imagen_2(self): # esta funcion se creo si el usuario quiere seleccionar otra imagen y no la seleccionada
+        panel_img_principal = None # se inicializa de nuevo el panel como nulo
+        self.ruta_imagen_user = fd.askopenfilename()
+        if len(self.ruta_imagen_user) > 0:  # Si alguna imagen fue seleccionada
+            if re.search("\.(jpg|jpeg|JPG|png|bmp|tiff)$", self.ruta_imagen_user):
+                self.panel_img_principal.pack_forget() # se limpia el panel de la imagen anterior
+                self.botonPredict.pack_forget() # se limpia el boton predecir
+                self.boton_selec_otra_img.pack_forget() # se limpia el boton para seleccionar otra imagen 
+                image = cv2.imread(self.ruta_imagen_user) # la imagen es leida
+                image = cv2.resize(image, (longitud, altura)) # Se cambia el tamaño a 300x300
+                image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB) # Se convierte a RGB
+                image = Image.fromarray(image) # se convierte de matriz a imagen
+                image = ImageTk.PhotoImage(image) # La funcion PhotoImage() crea una instancia de imagen para colocar en una label
+                self.imagen_copia = image # se crea una copia de la imagen para colocarla en la ventana secundaria al momento de hacer la prediccion
+                self.botonPredict = Button(text="Detectar Estado de Salud", command=self.prediccion) # se crea el boton que hace la prediccion
+                self.botonPredict.pack() # el boton es colocado en la interfaz
+                self.boton_selec_otra_img = Button(text="Seleccionar otra imagen", command=self.seleccionar_imagen_2) # se crea el boton para seleccionar otra imagen si lo desea
+                self.boton_selec_otra_img.pack() # el boton se coloca en la interfaz
+
+                if panel_img_principal is None: # Si la variable panel_img_principal esta inicializada en nula
+                    self.panel_img_principal = Label(self.master, image = image)  # se carga la imagen en la label
+                    self.panel_img_principal.pack(side = "bottom")
+                else:
+                    self.panel_img_principal.configure(self.master, image = image)
+                    self.panel_img_principal.pack(side="bottom")
+            else:
+                self.ventana_alerta = Toplevel()
+                self.ventana_alerta.geometry("300x100+500+250") # Se establece el tamaño de la ventana secundaria
+                self.ventana_alerta.wm_title("WARNING!!!") # Se le asigna el titulo
+                self.ventana_alerta.focus_set() # Este metodo enfoca la ventana secundaria 
+                self.ventana_alerta.grab_set() # desactivamos la ventana principal 
+                self.aviso = Label(self.ventana_alerta, text = "No ha seleccionado una imagen\nIntente Nuevamente!!") # asignamos la etiqueta_imagen para mencionar que es un coral enfermo
+                self.aviso.pack()
+                self.aviso.config(fg="black")
+                self.botonCerrar = Button(self.ventana_alerta, text='Aceptar', command=self.cerrar_ventana_warning)
+                self.botonCerrar.pack()
+        self.master.mainloop()
+
+
+
+    def prediccion(self):  # esta funcion se activa al momento de darle click al boton "Detectar estado de salud"
+        self.botonPredict.pack_forget()  # los widgets son limpiados de nuevo al hacer una prediccion ya que si no se sobreescriben en los anteriores
+        self.boton_selec_otra_img.pack_forget()
+        self.panel_img_principal.pack_forget()
+        
+        with tf.keras.utils.custom_object_scope({'GlorotUniform':glorot_uniform()}): # cargamos el modelo y los pesos obtenidos de las rutas
+            cnn = load_model(self.ruta_modelo_user)
+        cnn.load_weights(self.ruta_pesos_user)
+
+        # las variables panel son creadas para representar ese espacion donde se colocara una imagen
+        panel_ventana_prediccion = None
+        # Aqui se hace la prediccion obteniendo la imagen de la ruta y cambiandole su tamaño al tamaño que se uso en el entrenamiento 200x200
+        x = load_img(self.ruta_imagen_user, target_size = (longitud, altura)) 
+        x = img_to_array(x) # la imagen se convierte a tipo arreglo numpy con tres canales por RGB(200,200,3)
+        # luego se convierte la imagen a 4D, se agrega un 1 dimension mas en la posicion especificada axis=0, quedando
+        # de la siguiente manera (1,200,200,3) en donde este uno representa el tamaño de lote, este valor representa
+        # la cantidad de imagenes que agrupa para alimentar la CNN, el lote puede ser una sola imagen, sin embargo
+        # todavia necesita esa dimension adicional de 1 para mostrar el tamaño de lote
+        x = np.expand_dims(x, axis = 0) # 
+
+        # Aqui se realiza la prediccion si el valor de la prediccion es mayor a el umbral 0.5 entonces la salida
+        # será 1, si no la salida sera 0, esto lo devuelve en un arreglo numpy [[0]] o [[1]] dependiendo de la prediccion
+        answer = (cnn.predict(x) > 0.5).astype("int32") 
+        respuesta = answer[0][0] # Accedemos al valor almacenado en la matriz indexando [0][0] ya que es en 2D
+        
+        if respuesta == 0: # si la prediccion es 0 == Enfermo
+            print(respuesta)
+            self.subVentana = Toplevel() # Crea una nueva ventana secundaria para mostrar la salida
+            self.subVentana.geometry("600x300+300+150") # Se establece el tamaño de la ventana secundaria
+            self.subVentana.wm_title("(Tesis)Información Sobre Estado de Salud") # Se le asigna el titulo
+            self.subVentana.focus_set() # Este metodo enfoca la ventana secundaria 
+            self.subVentana.grab_set() # desactivamos la ventana principal 
+            self.pred = Label(self.subVentana, text = "Coral ENFERMO detectado") # asignamos la etiqueta_imagen para mencionar que es un coral enfermo
+            self.pred.grid(row = 0, column = 0)
+            self.pred.config(fg = "black", font = ("verdana", 12))
+           
+            
+            if panel_ventana_prediccion == None:
+                self.panel_ventana_prediccion = Label(self.subVentana, image = self.imagen_copia) # le pasamos la imagen a la etiqueta_imagen
+                self.panel_ventana_prediccion.image = self.imagen_copia  # ***********?????????????????????
+                self.panel_ventana_prediccion.grid(row = 1, column = 0) # posicionamos la etiqueta_imagen en la fila 1 columna 0
+
+                self.text = Text(self.subVentana, width=40, height=12) # creamos un campo de texto para insertar la informacion respectiva al estado de salud del coral
+                self.text.insert(tkinter.END, 'El coral tiene una anomalia en su estructura') # Texto informativo
+                self.text.grid(row = 1, column = 1) # se posiciona a la derecha de la imagen en la fila 1 columna 1
+
+                # Mientras esto sucede, se crea inmediatamente un boton en la ventana principal 
+                # para realizar una nueva prediccion y tambien se crea un boton en la misma ventana principal para salir
+                
+                self.botonNvaDeteccion = Button(self.master, text="Nueva Detección", command=self.Cle) # al momento de realizar una nueva prediccion, los botones se eliminan y se limpia la pantalla dejando unicamente el boton para seleccionar la imagen a evaluar
+                self.botonNvaDeteccion.pack()
+                self.botonSalir = Button(self.master, text="Salir", command=self.Salir) # boton para salir
+                self.botonSalir.pack()
+
+        # Se definen los mismos pasos cuando la prediccion es 1 == SANO
+        elif respuesta == 1:
+            print(respuesta)
+            self.subVentana = Toplevel()
+            self.subVentana.geometry("600x300+300+150")
+            self.subVentana.wm_title("(Tesis)Información de Sobre Estado de Salud")
+            self.subVentana.focus_set()
+            self.subVentana.grab_set()
+            self.pred = Label(self.subVentana, text = "Coral SANO detectado")
+            self.pred.grid(row = 0, column = 0)
+            self.pred.config(fg = "black", font = ("verdana", 12))
+            
+            # de igual manera se definen las mismas funcionalidades para cuando es un coral sano
+            if panel_ventana_prediccion == None:
+                self.panel_ventana_prediccion = Label(self.subVentana, image = self.imagen_copia)
+                self.panel_ventana_prediccion.image = self.imagen_copia
+                self.panel_ventana_prediccion.grid(row = 1, column = 0)
+
+                self.text = Text(self.subVentana, width = 40, height = 12)
+                self.text.insert(tkinter.END, 'El coral tiene una estructura normal sin niguna alteracion')
+                self.text.grid(row = 1, column = 1)
+
+                self.botonNvaDeteccion = Button(self.master, text="Nueva Detección", command=self.Cle)
+                self.botonNvaDeteccion.pack()
+                self.botonSalir = Button(self.master, text ="Salir", command=self.Salir)
+                self.botonSalir.pack()
+        self.boton_selec_otra_img.pack_forget()
+
+
+        def CerrarVentanaSecundaria(): # funcion local(pertenece a predict()) para cerrar la ventana secundaria
+            self.subVentana.quit() 
+            self.subVentana.destroy() 
+                                
+        # Se crea el boton que aparecera en la ventana secuendaria para salir
+        buttonCerrar = Button(self.subVentana, text="Cerrar", command=CerrarVentanaSecundaria)
+        buttonCerrar.grid(row = 2, column = 3) # este ira en la fila 2 y columna 3
+
+        self.master.wait_window(self.subVentana) # espera hasta que la subventana sea destruida
+
+        return respuesta # Retorna el valor 0 o 1 dependiendo de la prediccion
+
+    # esta funcion sirve para eliminar los widgets una vez realizada una nueva prediccion y agregar los widgets para una nueva deteccion
+    def Cle(self): 
+        #self.botonPredict.pack_forget()  ### ???????????????????????????????????????????????'
+        self.botonNvaDeteccion.pack_forget()
+        self.botonSalir.pack_forget()
+        
+        # al hacer una nueva deteccion, se colocan de nuevo los widgets de obtencion de imagen
+        self.etiqueta_imagen.pack()
+        self.boton_cargar_imagen.pack()
+        self.panelLogo.pack(side = "bottom")
+
+    # esta funcion sirve para cerrar LA VENTANA PRINCIPAL   
+    def Salir(self):
+        self.master.destroy()
+        
+      
+# METODO MAIN PARA HACER FUNCIONAR LA UI
+if __name__ == "__main__":
+    root = Tk()
+    Principal(root)
+  
