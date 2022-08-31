@@ -20,3 +20,13 @@ def configurar_img(self, ubicacion): ##############
             self.imagen = Image.fromarray(self.imagen) # se convierte de matriz a imagen
             self.imagen = ImageTk.PhotoImage(self.imagen) # La funcion PhotoImage() crea una instancia de imagen para colocar en una label
         return self.imagen
+
+
+def eliminar_widgets(self, *args): #######################################
+    for arg in range(len(args)):
+        self.widgets_borrados = args[arg].pack_forget()
+    return self.widgets_borrados 
+
+def abrir_ventana(self): ###################################################
+        self.ruta = fd.askopenfilename()
+        return self.ruta
