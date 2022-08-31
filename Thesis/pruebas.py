@@ -24,7 +24,7 @@ print(type(x))'''
 
 #array = [[1]]
 #print(array[0][0])
-from tkinter import*
+'''from tkinter import*
 from tkinter import filedialog as fd 
 from tkinter import Tk, Label, Button, Entry, ttk
 import tkinter
@@ -52,4 +52,20 @@ class BotonPrueba():
 
 if __name__ == "__main__":
     root = Tk()
-    BotonPrueba(root)
+    BotonPrueba(root)'''
+
+import cv2
+ 
+# read image
+img = cv2.imread('C:/Users/saulu/Documents/SistemaTesis/Thesis/logo.jpg', cv2.IMREAD_UNCHANGED)
+ 
+# get dimensions of image
+dimensions = img.shape
+ 
+# height, width, number of channels in image
+height = img.shape[0]
+width = img.shape[1]
+ 
+print('Image Height       : ',height)
+print('Image Width        : ',width)
+print(type(height))
