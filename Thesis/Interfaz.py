@@ -30,6 +30,7 @@ class Principal(tools):
         self.master = master
         self.master.title("(TESIS) Predicción de Salud en Corales del Caribe Mexicano")
         self.master.geometry("500x400+450+100")
+        self.master.resizable(False, False)
         self.etiqueta_modelo = Label(self.master, text="Seleccione el modelo: ")
         self.etiqueta_modelo.pack()
         self.boton_cargar_modelo = Button(self.master, text="Cargar Modelo", command=self.cargar_modelo) # boton para cargar el modelo obtenido de la red
