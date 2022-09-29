@@ -1,0 +1,6 @@
+{
+    "python.terminal.activateEnvironment": false,
+    "python.linting.pylintEnabled": false,
+    "python.linting.pycodestyleEnabled": false,
+    "python.defaultInterpreterPath": "C:\\Users\\saulu\\Documents\\SistemaTesis\\venv\\Scripts\\python.exe",
+}

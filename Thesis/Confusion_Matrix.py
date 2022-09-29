@@ -1,5 +1,5 @@
 # ******** PARTE 2: METRICAS DE DESEMPEÑO MATRIZ DE CONFUSION *******
-# Este modulo se implemento para medir la eficacia del modelo respecto a los resultados arrojados
+# Se mide la eficacia del modelo respecto a los resultados arrojados
 # Se utiliza la libreria sklearn para poder implementar sus utilidades
 import numpy as np 
 import pandas as pd 
@@ -15,10 +15,10 @@ from sklearn.metrics import roc_curve, auc, roc_auc_score
 import matplotlib.pyplot as plt 
 
 # Se coloca la ruta del conjunto de validacion para poder medir la eficacia de las predicciones
-test_path = 'C:/Users/saulu/Documents/SistemaTesis/Thesis/DATASET/TEST_SET'
+test_path = 'C:/Users/saulu/Documents/SistemaTesis/Thesis/set_median/test_set_median'
 
 # Cargamos el modelo
-modelo = load_model('C:/Users/saulu/Documents/SistemaTesis/Thesis/DATOS_RED/Modelo.h5')
+modelo = load_model('C:/Users/saulu/Documents/SistemaTesis/Thesis/datos_red_median/Modelo_median.h5')
 
 # Se convierten los valores a punto flotante, y se crea un generador para hacer las pruebas ya que el modelo 
 # fue creado usando generadores
@@ -52,16 +52,12 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Receiver Operating Characteristic')
 plt.legend(loc="lower right")
-plt.savefig('C:/Users/saulu/Documents/SistemaTesis/Thesis/METRICAS/GraficaROC.png')
+plt.savefig('C:/Users/saulu/Documents/SistemaTesis/Thesis/metricas_median/GraficaROC_median.png')
 plt.show()
-
-
 
 
 print('El tamaño del generador es: ', len(prediccion)) # Muestra el total de predicciones generadas desde la ruta 
 print(prediccion) # Muestra el valor de cada prediccion en un arreglo 2D [[1],[0],...]
-
-#clases = np.round(prediccion) # Convierte los valores a enteros
 
 filenames = test_generator.filenames  # Muestra el nombre de la carpeta y el archivo [Enfermos/enf.jpg]
 
@@ -88,7 +84,7 @@ print()
 # y la columna class que contiene las clases reales, este como es una lista comun, se obtienen todos los elementos con [:]
 # el excel es posteriormente se guarda en la carpeta MODELO
 results = pd.DataFrame({"file":filenames, "pr":prediccion[:,0], "class":real[:]})
-results.to_excel('C:/Users/saulu/Documents/SistemaTesis/Thesis/METRICAS/Predicciones.xlsx', sheet_name='Resultados de las Predicciones')
+results.to_excel('C:/Users/saulu/Documents/SistemaTesis/Thesis/metricas_median/Predicciones_median.xlsx', sheet_name='Resultados de las Predicciones')
 print(results)
 
 
@@ -128,8 +124,7 @@ print('Puntaje F1: ', f1)
 
 
 ######### Se Guardan Las Metricas en un Archivo de Texto ##########
-
-archivoPuntajes = open('C:/Users/saulu/Documents/SistemaTesis/Thesis/METRICAS/Scores.txt', 'w')
+archivoPuntajes = open('C:/Users/saulu/Documents/SistemaTesis/Thesis/metricas_median/Scores_median.txt', 'w')
 archivoPuntajes.write('Puntaje de Clasificación de Precisión: ' + str(ac) + '\n')
 archivoPuntajes.write('\n')
 archivoPuntajes.write('Puntaje de Recuperación: ' + str(rc) + '\n')
@@ -153,6 +148,6 @@ plt.yticks(tick_marks, classNames)
 for fila in range(2):
     for columna in range(2):
         plt.text(columna,fila, str(cm[fila][columna]))
-plt.savefig('C:/Users/saulu/Documents/SistemaTesis/Thesis/METRICAS/MatrizConfusion.png')
+plt.savefig('C:/Users/saulu/Documents/SistemaTesis/Thesis/metricas_median/MatrizConfusion_median.png')
 plt.show()
 plt.close()

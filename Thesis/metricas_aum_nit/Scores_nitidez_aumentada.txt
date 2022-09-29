@@ -1,0 +1,7 @@
+Puntaje de Clasificación de Precisión: 0.92
+
+Puntaje de Recuperación: [0.84 1.  ]
+
+Puntaje de Precisión TP/(TP + FP): [1.         0.86206897]
+
+Puntaje F1: [0.91304348 0.92592593]
