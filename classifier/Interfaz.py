@@ -17,10 +17,10 @@ from os import path
 longitud, altura = 200, 200 # Configuramos el alto y ancho que tendran las imagenes a utilizar en la interfaz
 
 # Definimos las rutas de los archivos necesarios para que funcione el programa
-ruta_logo_itm = 'C:/Users/saulu/Documents/Thesis/Thesis/logo.jpg'
-ruta_modelo_default = 'C:/Users/saulu/Documents/Thesis/Thesis/DATOS_RED/Modelo.h5'
-ruta_pesos_default = 'C:/Users/saulu/Documents/Thesis/Thesis/DATOS_RED/Pesos.h5'
-ruta_img_prueba = 'C:/Users/saulu/Documents/Thesis/Thesis/IMAGENES_PRUEBA'
+ruta_logo_itm = 'C:/Users/saulu/Documents/binary_classifier/classifier/logo.jpg'
+ruta_modelo_default = 'C:/Users/saulu/Documents/binary_classifier/classifier/DATOS_RED/Modelo.h5'
+ruta_pesos_default = 'C:/Users/saulu/Documents/binary_classifier/classifier/DATOS_RED/Pesos.h5'
+ruta_img_prueba = 'C:/Users/saulu/Documents/binary_classifier/classifier/IMAGENES_PRUEBA'
 cont = 0 # variable global que funje como contador para controlar la eliminacion del boton seleccionar otra imagen
 
 # Esta es la clase que crea la interfaz grafica se utiliza POO

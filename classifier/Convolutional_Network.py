@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 from openpyxl import Workbook
 
 
-TRAIN_PATH = 'C:/Users/saulu/Documents/Thesis/Thesis/conjunto_de_datos/conjunto_de_entrenamiento'
-TEST_PATH = 'C:/Users/saulu/Documents/Thesis/Thesis/conjunto_de_datos/conjunto_de_pruebas'
+TRAIN_PATH = 'C:/Users/saulu/Documents/binary_classifier/classifier/conjunto_de_datos/conjunto_de_entrenamiento'
+TEST_PATH = 'C:/Users/saulu/Documents/binary_classifier/classifier/conjunto_de_datos/conjunto_de_pruebas'
 
 K.clear_session() # limpia el backend de keras
 

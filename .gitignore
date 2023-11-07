@@ -1,10 +1,5 @@
-Thesis/__pycache__
-Thesis/conjunto_de_datos
-Thesis/DATOS_RED/Modelo.h5
-Thesis/DATOS_RED/Pesos.h5
-Thesis/IMAGENES_PRUEBA
-Thesis/datos_red_median/Modelo_median.h5
-Thesis/datos_red_median/Pesos_median.h5
-Thesis/datos_red_aum_nit/Modelo_nitidez_aumentada.h5
-Thesis/datos_red_aum_nit/Pesos_nitidez_aumentada.h5
-Thesis/set_median
+classifier/__pycache__
+classifier/conjunto_de_datos
+classifier/DATOS_RED/Modelo.h5
+classifier/DATOS_RED/Pesos.h5
+classifier/IMAGENES_PRUEBA

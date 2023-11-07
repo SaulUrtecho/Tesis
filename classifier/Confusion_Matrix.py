@@ -15,10 +15,10 @@ from sklearn.metrics import roc_curve, auc, roc_auc_score
 import matplotlib.pyplot as plt 
 
 # Se coloca la ruta del conjunto de validacion para poder medir la eficacia de las predicciones
-test_path = 'C:/Users/saulu/Documents/Thesis/Thesis/conjunto_de_datos/conjunto_de_pruebas'
+test_path = 'C:/Users/saulu/Documents/binary_classifier/classifier/conjunto_de_datos/conjunto_de_pruebas'
 
 # Cargamos el modelo
-modelo = load_model('C:/Users/saulu/Documents/Thesis/Thesis/DATOS_RED/Modelo.h5')
+modelo = load_model('C:/Users/saulu/Documents/binary_classifier/classifier/DATOS_RED/Modelo.h5')
 
 # Se convierten los valores a punto flotante, y se crea un generador para hacer las pruebas ya que el modelo 
 # fue creado usando generadores
@@ -52,7 +52,7 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Receiver Operating Characteristic')
 plt.legend(loc="lower right")
-plt.savefig('C:/Users/saulu/Documents/Thesis/Thesis/METRICAS/GraficaROC.png')
+plt.savefig('C:/Users/saulu/Documents/binary_classifier/classifier/METRICAS/GraficaROC.png')
 plt.show()
 
 
@@ -84,7 +84,7 @@ print()
 # y la columna class que contiene las clases reales, este como es una lista comun, se obtienen todos los elementos con [:]
 # el excel es posteriormente se guarda en la carpeta MODELO
 results = pd.DataFrame({"file":filenames, "pr":prediccion[:,0], "class":real[:]})
-results.to_excel('C:/Users/saulu/Documents/THesis/Thesis/METRICAS/Predicciones.xlsx', sheet_name='Resultados de las Predicciones')
+results.to_excel('C:/Users/saulu/Documents/binary_classifier/classifier/METRICAS/Predicciones.xlsx', sheet_name='Resultados de las Predicciones')
 print(results)
 
 
@@ -124,7 +124,7 @@ print('Puntaje F1: ', f1)
 
 
 ######### Se Guardan Las Metricas en un Archivo de Texto ##########
-archivoPuntajes = open('C:/Users/saulu/Documents/Thesis/Thesis/METRICAS/Scores.txt', 'w')
+archivoPuntajes = open('C:/Users/saulu/Documents/binary_classifier/classifier/METRICAS/Scores.txt', 'w')
 archivoPuntajes.write('Puntaje de Clasificación de Precisión: ' + str(ac) + '\n')
 archivoPuntajes.write('\n')
 archivoPuntajes.write('Puntaje de Recuperación: ' + str(rc) + '\n')
@@ -148,6 +148,6 @@ plt.yticks(tick_marks, classNames)
 for fila in range(2):
     for columna in range(2):
         plt.text(columna,fila, str(cm[fila][columna]))
-plt.savefig('C:/Users/saulu/Documents/Thesis/Thesis/METRICAS/MatrizConfusion.png')
+plt.savefig('C:/Users/saulu/Documents/binary_classifier/classifier/METRICAS/MatrizConfusion.png')
 plt.show()
 plt.close()
