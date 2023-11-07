@@ -8,8 +8,8 @@ import matplotlib.pyplot as plt
 from openpyxl import Workbook
 
 
-TRAIN_PATH = 'C:/Users/saulu/Documents/SistemaTesis/Thesis/set_median/train_set_median'
-TEST_PATH = 'C:/Users/saulu/Documents/SistemaTesis/Thesis/set_median/test_set_median'
+TRAIN_PATH = 'C:/Users/saulu/Documents/Thesis/Thesis/conjunto_de_datos/conjunto_de_entrenamiento'
+TEST_PATH = 'C:/Users/saulu/Documents/Thesis/Thesis/conjunto_de_datos/conjunto_de_pruebas'
 
 K.clear_session() # limpia el backend de keras
 
@@ -77,7 +77,7 @@ model.add(Flatten()) # los convertimos a un vector lineal
 model.add(Dense(units=128, activation='relu'))
 
 """ EL Overfitting es cuando el modelo solo toma como validos los datos
-con los cuales se entrenoy no logra generalizar con datos que sean
+con los cuales se entreno y no logra generalizar con datos que sean
 diferentes a la base de datos inicial """
 
 # El dropout establece aleatoriamente entradas en 0 
@@ -115,9 +115,9 @@ history = model.fit(
 # if not os.path.exists(directorio):
 # os.mkdir(directorio)  # se crea la carpeta en la ruta actual del proyecto
 # el modelo y los pesos son guardados respectivamente
-model.save('./datos_red_median/Modelo_median.h5')
+model.save('./DATOS_RED/Modelo.h5')
 
-model.save_weights('./datos_red_median/Pesos_median.h5')
+model.save_weights('./DATOS_RED/Pesos.h5')
 
 # Con el objeto creado podemos acceder al diccionario donde se
 # almacenan los parametros que arroja el modelo
@@ -159,7 +159,7 @@ plt.title('Training and validation loss')
 plt.xlabel('Epochs')
 plt.ylabel('Loss')
 plt.legend()
-plt.savefig('./datos_red_median/Perdidas_median.png')
+plt.savefig('./DATOS_RED/Perdidas.png')
 plt.show()
 
 plt.plot(epochs, acc, 'y', label='Training acc')
@@ -168,7 +168,7 @@ plt.title('Training and validation accuracy')
 plt.xlabel('Epochs')
 plt.ylabel('Accuracy')
 plt.legend()
-plt.savefig('./datos_red_median/Precisiones_median.png')
+plt.savefig('./DATOS_RED/Precisiones.png')
 plt.show()
 
 # Aqui se crea el archivo excel donde se almacena los datos del entrenamiento
@@ -198,4 +198,4 @@ for accu, vala, vals, loss in zip(acc, val_acc, val_loss, loss):
     fila += 1
     num += 1
 
-wb.save('./datos_red_median/Resultados_median.xlsx') # los datos son guardados
+wb.save('./DATOS_RED/Resultados.xlsx') # los datos son guardados

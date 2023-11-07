@@ -92,40 +92,6 @@ print(type(height))
 
 '''
 
-#ESTE SCRIPT ME SIRVIO PARA USAR EL FILTRO MEDIANO
-
-from PIL import Image, ImageEnhance, ImageFilter
-import re 
-import os
-
-#imgpath = 'C:/Users/saulm/Documents/Python/Deep_Learning/RNC/Coral_Reef_Disease/test_set'
-imgpath = 'C:/Users/saulu/Documents/SistemaTesis/Thesis/DATASET/TRAINING_SET'
-images = []
-dircount = []
-cant = 0
-
-print("leyendo imagenes de: ", imgpath)
-for root, dirnames, filenames in os.walk(imgpath):
-    for filename in filenames:
-        if re.search("\.(jpg|jpeg|JPG|png|bmp|tiff)$", filename):
-            filepath = os.path.join(root, filename)
-            imagen = Image.open(filepath)
-            #convirtiendo a RBG
-            imagen = imagen.convert("RGB")
-            img_modify = imagen.filter(ImageFilter.MedianFilter(size=5))
-            img_modify.save('./train_set_median/' + str(cant) + ".jpg")
-            cant = cant + 1
-            b = "Leyendo..." + str(cant)
-            print(b,end="\r")
-           
-dircount.append(cant)
-print("Imagenes en cada directorio", dircount)
-print("suma total de imagenes en subdirs", sum(dircount))
-
-'''
-
-'''
-
 #ESTE SCRIPT ME SIRVIO PARA ROTAR LAS IMAGENES Y ASI AUMENTAR EL DATASET
 
 from PIL import Image
